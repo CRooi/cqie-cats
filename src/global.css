@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    background-color: #fbfbfb;
+    overflow: hidden;
+}
+
+.t-tab-bar {
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    z-index: 1000;
+}
+
+.t-tab-bar-item {
+    background-color: transparent !important;
+}
