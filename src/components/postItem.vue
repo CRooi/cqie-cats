@@ -22,7 +22,12 @@
         </div>
 
         <div class="flex justify-end">
-            <div class="flex items-center">
+            <div class="flex items-center" @click="isShowDebugingDialog = true">
+                <t-icon name="chat-message" />
+                <div>0</div>
+            </div>
+
+            <div class="ml-2 flex items-center" @click="isShowDebugingDialog = true">
                 <t-icon name="thumb-up-2" />
                 <div>0</div>
             </div>
@@ -30,6 +35,12 @@
 
         <t-divider />
     </div>
+
+    <t-dialog
+        v-model:visible="isShowDebugingDialog"
+        title="该功能开发中。"
+        confirm-btn="我知道了"
+    />
 
     <t-image-viewer :index="nowIndex" v-model:images="images" v-model:visible="visible" />
 </template>
@@ -45,6 +56,7 @@ const props = defineProps<{
     data: any
 }>()
 
+const isShowDebugingDialog = ref(false)
 const images = ref(JSON.parse(props.data.images))
 const visible = ref(false)
 const nowIndex = ref(0)

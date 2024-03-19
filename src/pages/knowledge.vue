@@ -24,7 +24,7 @@
                     <KnowledgeItem
                         color="rgb(168,171,176,.9)"
                         strokeColor="rgb(168,171,176)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="🍽️"
                         content="喂粮只喂七分饱，让流浪猫保有自行觅食的能力。"
                     />
@@ -32,7 +32,7 @@
                     <KnowledgeItem
                         color="rgb(78,166,240,.9)"
                         strokeColor="rgb(78,166,240)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="💧"
                         content="用一次性筒状餐盒装水，放置于隐蔽处，比如短灌木丛中，人看不到，猫找得到。"
                     />
@@ -40,7 +40,7 @@
                     <KnowledgeItem
                         color="rgb(196,185,174,.9)"
                         strokeColor="rgb(196,185,174)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="🍖"
                         content="尽量用猫干粮喂，因为湿粮容易招来蚊蝇,且猫干粮较为干燥，较好保存。"
                     />
@@ -56,7 +56,7 @@
             </t-collapse>
 
             <t-collapse>
-                <t-collapse-panel value="0" header="🍲不建议投喂的食物">
+                <t-collapse-panel value="0" header="🙅不建议投喂的食物">
                     <KnowledgeItem
                         color="rgb(150,114,94,.9)"
                         strokeColor="rgb(150,114,94)"
@@ -76,7 +76,7 @@
                     <KnowledgeItem
                         color="rgb(193,192,190,.9)"
                         strokeColor="rgb(193,192,190)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="🥛"
                         content="牛奶、奶制品：大部分的猫对乳糖不耐受，它们的消化系统不可以处理奶制品，所以如果给它们吃了会导致腹泻。"
                     />
@@ -84,7 +84,7 @@
                     <KnowledgeItem
                         color="rgb(178,108,135,.9)"
                         strokeColor="rgb(178,108,135)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="🍇"
                         content="葡萄/葡萄干：吃葡萄干会导致呕吐、肾衰竭，虽然此毒性多发于狗狗身上，但美国动物保护协会建议由于其潜在的毒性，不建议给猫咪喂食。"
                     />
@@ -100,7 +100,7 @@
                     <KnowledgeItem
                         color="rgb(191,139,90,.9)"
                         strokeColor="rgb(191,139,90)"
-                        textColor="#000"
+                        textColor="#fff"
                         emoji="🍲"
                         content="防腐剂食品：人类吃的剩菜剩饭，加了防腐剂的食品，加了调味料、盐以及熏、腌制食品。都有可能损伤猫咪消化器官。"
                     />
@@ -123,7 +123,3 @@
 import BlankListItem from '../components/blankListItem.vue'
 import KnowledgeItem from '../components/knowledgeItem.vue'
 </script>
-
-<style>
-
-</style>

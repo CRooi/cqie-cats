@@ -11,7 +11,10 @@
                 <img @click="isViewImage = true" class="rounded-3xl max-h-52 w-full object-cover" style="object-position: center;" :src="`https://cqiecats.projectbs.cn/api/images/${data.image}`" alt="">
             </div>
 
-            <div v-if="!isLoading" class="mt-3 font-bold text-xl">信息</div>
+            <div v-if="!isLoading" class="mt-3 font-bold text-xl">
+                信息
+                <span class="opacity-55 text-xs font-normal">(数据可能与实际存在出入)</span>
+            </div>
 
             <div class="flex items-center">
                 <Griddataitem
@@ -40,7 +43,7 @@
                 <Griddataitem
                     v-if="!isLoading"
                     title="出没区域"
-                    :content="data.place"
+                    :content="data.place.split('|')[0]"
                     class="flex-1"
                 />
             </div>
@@ -99,6 +102,10 @@
                 </div>
             </div>
 
+            <div v-if="!isLoading" class="mt-3 opacity-50">出没区域示意</div>
+
+            <div v-if="!isLoading" id="map" class=" border-gray-300 border-solid border-2 mt-3 w-full h-64 rounded-3xl"></div>
+
             <div v-if="!isLoading" class="mt-5 font-bold text-xl">动态</div>
             
             <div class="mt-3" v-if="!isLoading">
@@ -109,6 +116,8 @@
                     :key="item.postId"
                     :data="item"
                 />
+
+                <div class="text-center opacity-55 text-sm" v-if="!isLoading && postsData.length">暂无更多数据。</div>
 
                 <div style="height: calc(86px);"></div>
             </div>
@@ -122,9 +131,10 @@
 
         <t-textarea v-model="input.content" style="padding: 0;" name="内容" placeholder="编辑文字" autosize />
 
-        <div class="opacity-50 mt-3">添加图片</div>
+        <!-- <div class="opacity-50 mt-3">添加图片</div> -->
 
         <t-upload
+            class="mt-5"
             multiple
             :max="10"
             style="padding: 0;"
@@ -141,14 +151,23 @@
 
     <t-image-viewer v-model:images="image" v-model:visible="isViewImage" />
 
-    <t-fab @click="isShowEditPost = true" :icon="iconFunc" text="发布动态" />
+    <t-fab @click="isLogedIn ? isShowEditPost = true : isShowNotLogedInDialog = true" :icon="iconFunc" text="发布动态" />
+
+    <t-dialog
+        v-model:visible="isShowNotLogedInDialog"
+        title="请先登录。"
+        confirm-btn="我知道了"
+    />
 </template>
 
 <script setup lang="ts">
-import { h, ref, watch, onMounted } from 'vue'
+import { h, ref, Ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 import { AddIcon } from 'tdesign-icons-vue-next'
+import maplibre from 'maplibre-gl'
+import { isMapboxURL, transformMapboxUrl } from 'maplibregl-mapbox-request-transformer'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 import Griddataitem from '../components/griddataitem.vue'
 import PostItem from '../components/postItem.vue'
@@ -168,6 +187,12 @@ const isLoading = ref(true)
 const postsData = ref([] as any)
 
 const isShowEditPost = ref(false)
+
+const isLogedIn = ref(false)
+const isShowNotLogedInDialog = ref(false)
+
+const map = ref<maplibre.Map>() as Ref<maplibre.Map>
+const mapboxKey = 'pk.eyJ1IjoieW93b3QiLCJhIjoiY2xmbmUxYnl2MGwzdjN5bXYzdnB2aGhjYyJ9.wDYgg0msNnU7ZetZLcJzUQ'
 
 const back = () => {
     router.push('/list')
@@ -219,6 +244,9 @@ const releasePost = async () => {
         })).data
 
         postsData.value = data2.data.reverse()
+
+        input.value.content = ''
+        uploadImages.value = []
     } else {
         showMessage('error', data.data.message)
     }
@@ -229,6 +257,20 @@ watch(route, async () => {
 })
 
 const mount = async () => {
+    if (localStorage.getItem('token')) {
+        const { data } = (await axios.post('https://cqiecats.projectbs.cn/api/queryuserinfo', {
+            token: localStorage.getItem('token')
+        }))
+
+        if (data.data.status) {
+            isLogedIn.value = true
+        }
+
+        isLoading.value = false
+    } else {
+        isLoading.value = false
+    }
+
     id.value = route.params.id as string
 
     isLoading.value = true
@@ -256,10 +298,90 @@ const mount = async () => {
     })).data.data.reverse()
 
     isLoading.value = false
+
+    setTimeout(() => {
+        initMap()
+    }, 500)
+}
+
+const initMap = () => {
+    map.value = new maplibre.Map({
+        container: 'map',
+        style: {
+            "version": 8,
+            "sources": {
+                "raster-tiles": {
+                    "type": "raster",
+                    "tiles": ["https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"],
+                    "tileSize": 256
+                }
+            },
+            "layers": [{
+                "id": "simple-tiles",
+                "type": "raster",
+                "source": "raster-tiles",
+                "minzoom": 3,
+                "maxzoom": 22
+            }]
+        },
+        center: [107.79942839007867, 37.093496518166944],
+        zoom: 2,
+        // transformRequest: (url, resourceType) => {
+        //     if (isMapboxURL(url)) {
+        //         return transformMapboxUrl(url, resourceType as string, mapboxKey)
+        //     }
+
+        //     return { url }
+        // }
+    })
+
+    map.value.on('load', () => {
+        map.value.on('click', e => {
+            console.log(e.lngLat)
+        })
+
+        map.value.fitBounds(
+            new maplibre.LngLatBounds(
+                [106.59792953402552, 29.427526293688217],
+                [106.59248720130404, 29.416522251964068]
+            ),
+            { padding: 10 }
+        )
+
+        const lng = data.value.place.split('|')[1].split(',')[0]
+        const lat = data.value.place.split('|')[1].split(',')[1]
+
+        console.log(lng)
+
+        const el1 = document.createElement('div') as HTMLDivElement
+        el1.className = 'markerInner'
+
+        const el2 = document.createElement('div') as HTMLDivElement
+        el2.className = 'markerOutter'
+
+        const el3 = document.createElement('div') as HTMLDivElement
+        el3.className = 'markerSpread'
+
+        new maplibre.Marker({ element: el1 })
+            .setLngLat([lng, lat])
+            .addTo(map.value)
+
+        new maplibre.Marker({ element: el2 })
+            .setLngLat([lng, lat])
+            .addTo(map.value)
+
+        new maplibre.Marker({ element: el3 })
+            .setLngLat([lng, lat])
+            .addTo(map.value)
+    })
 }
 
 onMounted(async () => {
     await mount()
+})
+
+onBeforeUnmount(() => {
+    map.value.remove()
 })
 </script>
 

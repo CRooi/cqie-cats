@@ -9,7 +9,7 @@
 
     <Me v-if="page !== 'login' && tabSelection === 'me'" />
 
-    <t-tab-bar style="border: 1px #cdcdcd solid;" v-if="page !== 'login'" id="tab-bar" v-model="tabSelection" shape="round" theme="tag" :split="false">
+    <t-tab-bar style="border: 1px rgba(205, 205, 205, .5) solid;" v-if="page !== 'login'" id="tab-bar" v-model="tabSelection" shape="round" theme="tag" :split="false">
         <t-tab-bar-item v-for="item in tabList" :key="item.value" :value="item.value">
             <template #icon>
                 <t-icon :name="item.icon" />
