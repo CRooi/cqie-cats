@@ -65,7 +65,7 @@ const back = () => {
 }
 </script>
 
-<style scoped>
+<style>
 .button-group {
     background-color: var(--bg-color-demo, #fff);
     box-sizing: border-box;

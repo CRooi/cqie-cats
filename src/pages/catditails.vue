@@ -104,7 +104,7 @@
 
             <div v-if="!isLoading" class="mt-3 opacity-50">出没区域示意</div>
 
-            <div v-if="!isLoading" id="map" class=" border-gray-300 border-solid border-2 mt-3 w-full h-64 rounded-3xl"></div>
+            <div v-if="!isLoading" id="map" class="border-gray-300 border-solid border-2 mt-3 w-full h-64 rounded-3xl"></div>
 
             <div v-if="!isLoading" class="mt-5 font-bold text-xl">动态</div>
             
@@ -385,7 +385,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style scoped>
+<style>
 .button-group {
     background-color: var(--bg-color-demo, #fff);
     box-sizing: border-box;
